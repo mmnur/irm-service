@@ -3,27 +3,27 @@ package com.example.irm.error;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class IrmCryptographyException extends IrmException
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class IrmUserNotFoundException extends IrmException
 {
 	private static final long serialVersionUID = 3L;
 
-	public IrmCryptographyException()
+	public IrmUserNotFoundException()
 	{
         super();
     }
 
-    public IrmCryptographyException(String message)
+    public IrmUserNotFoundException(String message)
     {
         super(message);
     }
 
-    public IrmCryptographyException(Throwable cause)
+    public IrmUserNotFoundException(Throwable cause)
     {
         super(cause);
     }
     
-    public IrmCryptographyException(String message, Throwable cause)
+    public IrmUserNotFoundException(String message, Throwable cause)
     {
         super(message, cause);
     }

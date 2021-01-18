@@ -14,8 +14,5 @@ public class IrmApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(IrmApplication.class, args);
 	}
-
-
-
 }
 

@@ -2,53 +2,108 @@ package com.example.irm.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.example.irm.error.AlreadyExistsException;
+import com.example.irm.error.IrmUserNotFoundException;
+import com.example.irm.graph.Entity;
+import com.example.irm.graph.RelationshipGraph;
 import com.example.irm.model.User;
 import com.example.irm.repository.UserRepository;
+import com.example.irm.utils.EntityType;
 import com.example.irm.view.UserUI;
 
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
  
  
 @RestController
+@RequestMapping("/users")
 public class UserController
 {
 	@Autowired
 	UserRepository repository;
 	
-	@GetMapping(path = "/users/bulkregister")
-	public String bulkcreate()
+	@GetMapping(path = "/bulkregister")
+	public Iterable<User> bulkcreate()
 	{
-		// save a single User
-		repository.save(new User("John Doe", "john1@example.com", "john1", "john123"));
-		
-		// save a list of Users
-        repository.saveAll(Arrays.asList(
-        		new User("Jim Carter", "jim1@example.com", "jim1", "jim123")
+		 Iterable<User> users = repository.saveAll(Arrays.asList(
+        		  new User("Jim Carter", "jim1@example.com", "jim1", "jim123")
+        		, new User("John Doe", "john1@example.com", "john1", "john123")
         		, new User("Jack Smith", "jack1@example.com", "jack1", "jack123")
         		, new User("Pam Smith", "pam1@example.com", "pam1", "pam123")
         		, new User("Oliver Smith", "oliver1@example.com", "oliver1", "oliver123")));
 		
-		return "Demo users are created";
-	}
-	
-	@PostMapping(path = "/users/register", consumes = "application/json")
-	public String create(@RequestBody UserUI user)
-	{
-		// save a single User
-		repository.save(new User(user.getDisplayName(), user.getEmail(), user.getUsername(), user.getPassword()));		
+		for (User user: users) {
+			String eid = user.getEntityId();
+			Entity entity = new Entity(eid, EntityType.User); 
+			RelationshipGraph.getGraph().addEntity(entity);
+		}
 
-		return "EID = " + repository.findByEmail(user.getEmail()).get(0).getEntityId();
+		return users;
 	}
 	
-	@GetMapping(path = "/users/findall")
+	@PostMapping(
+			path = "/register",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public Map<String, String> create(@RequestBody UserUI userUI)
+			throws AlreadyExistsException
+	{
+		List<User> users = repository.findByUsername(userUI.getUsername());		
+		if (!users.isEmpty()) {
+			throw new AlreadyExistsException("A user already exists with the same username");
+		}
+		
+		users = repository.findByEmail(userUI.getEmail());
+		if (!users.isEmpty()) {
+			throw new AlreadyExistsException("A user already exists with the same email");
+		}
+		
+		User user = repository.save(new User(userUI.getDisplayName(), userUI.getEmail(), userUI.getUsername(), userUI.getPassword()));
+		String eid = user.getEntityId();
+		Entity entity = new Entity(eid, EntityType.User); 
+		RelationshipGraph.getGraph().addEntity(entity);
+
+		Map<String, String> retValue = new HashMap<String, String>();		
+		retValue.put("entityId", eid);
+		
+		return retValue;
+	}
+	
+	@PostMapping(
+			path = "/authenticate",
+			consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, String> authenticate(@RequestBody UserUI userUI)
+			throws IrmUserNotFoundException
+	{
+		List<User> users = repository.findByUsername(userUI.getUsername());		
+		if (users.isEmpty()) {
+			throw new IrmUserNotFoundException("Username or password not found!");
+		}
+		
+		User user = users.get(0);
+		String password = user.getPassword();
+		if (userUI.getPassword().equals(password)) {
+			Map<String, String> retValue = new HashMap<String, String>();		
+			retValue.put("entityId", user.getEntityId());			
+			return retValue;			
+		}
+		throw new IrmUserNotFoundException("Username or password not found!");
+	}
+	
+	@GetMapping(path = "/findall")
 	public List<UserUI> findAll()
 	{
 		List<User> users = repository.findAll();
@@ -61,21 +116,21 @@ public class UserController
 		return userUI;
 	}
 	
-	@RequestMapping(path = "/users/eid/{entityId}")
+	@RequestMapping(path = "/eid/{entityId}")
 	public String searchByEntityId(@PathVariable String entityId){
 		String user = "";
 		user = repository.findByEntityId(entityId).toString();
 		return user;
 	}
 	
-	@RequestMapping(path = "/users/email/{email}")
+	@RequestMapping(path = "/email/{email}")
 	public String searchByEmail(@PathVariable String email){
 		String user = "";
 		user = repository.findByEmail(email).toString();
 		return user;
 	}
 
-	@RequestMapping(path = "/users/username/{username}")
+	@RequestMapping(path = "/username/{username}")
 	public List<UserUI> fetchDataByUsername(@PathVariable String username){
 	
 		List<User> users = repository.findByUsername(username);

@@ -9,20 +9,18 @@ public class DeviceUI
 	private String challenge;
 	private String challengeResponse;
 	private Boolean registerationCompleted;
-	private String scopes;
 
 	protected DeviceUI()
 	{
 	}
  
-	public DeviceUI(String displayName, String ownerEID, String publicKey, String challenge, Boolean registerationCompleted, String scopes)
+	public DeviceUI(String displayName, String ownerEID, String publicKey, String challenge, Boolean registerationCompleted)
 	{
 		this.displayName = displayName;
 		this.ownerEID = ownerEID;
 		this.publicKey = publicKey;
 		this.challenge = challenge;
 		this.registerationCompleted = registerationCompleted;
-		this.scopes = scopes;
 	}
  
 	public String getEntityId()
@@ -95,20 +93,10 @@ public class DeviceUI
         this.registerationCompleted = registerationCompleted;
     }
     
-	public String getScopes()
-	{
-        return scopes;
-    }
-	
-    public void setScopes(String scopes)
-    {
-        this.scopes = scopes;
-    }
-    
 	@Override
 	public String toString()
 	{
-		return String.format("Device[entityId=%s, displayName='%s', ownerEID=%s, publicKey=%s, scopes=%s, registerationCompleted=%s]",
-				entityId, displayName, ownerEID, publicKey, scopes, String.valueOf(registerationCompleted));
+		return String.format("Device[entityId=%s, displayName='%s', ownerEID=%s, publicKey=%s, registerationCompleted=%s]",
+				entityId, displayName, ownerEID, publicKey, String.valueOf(registerationCompleted));
 	}
 }

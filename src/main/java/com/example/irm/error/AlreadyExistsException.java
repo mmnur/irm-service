@@ -3,27 +3,27 @@ package com.example.irm.error;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class IrmNotFoundException extends IrmException
+@ResponseStatus(HttpStatus.CONFLICT)
+public class AlreadyExistsException extends IrmException
 {
 	private static final long serialVersionUID = 2L;
 
-	public IrmNotFoundException()
+	public AlreadyExistsException()
 	{
         super();
     }
 
-    public IrmNotFoundException(String message)
+    public AlreadyExistsException(String message)
     {
         super(message);
     }
 
-    public IrmNotFoundException(Throwable cause)
+    public AlreadyExistsException(Throwable cause)
     {
         super(cause);
     }
     
-    public IrmNotFoundException(String message, Throwable cause)
+    public AlreadyExistsException(String message, Throwable cause)
     {
         super(message, cause);
     }

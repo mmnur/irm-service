@@ -2,7 +2,6 @@ package com.example.irm.model;
 
 import java.io.Serializable;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,19 +37,15 @@ public class Device implements Serializable
 	@Column(name = "RegisterationCompleted")
 	private Boolean registerationCompleted;
 
-	@Column(name = "Scopes", length = 1000)
-	private String scopes;
-
 	protected Device()
 	{
 	}
 
-	public Device(String displayName, String ownerEID, String publicKey, String scopes)
+	public Device(String displayName, String ownerEID, String publicKey)
 	{
 		this.displayName = displayName;
 		this.ownerEID = ownerEID;
 		this.publicKey = publicKey;
-		this.scopes = scopes;		
 		this.challenge = "chlng-" + java.util.UUID.randomUUID().toString() + String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
 		this.registerationCompleted = false;
 	}
@@ -114,21 +109,11 @@ public class Device implements Serializable
     {
         this.registerationCompleted = registerationCompleted;
     }
-    
-	public String getScopes()
-	{
-        return scopes;
-    }
-	
-    public void setScopes(String scopes)
-    {
-        this.scopes = scopes;
-    }
-    
+    	
 	@Override
 	public String toString()
 	{
-		return String.format("Device[entityId=%s, displayName='%s', ownerEID=%s, publicKey=%s, scopes=%s, registerationCompleted=%s]",
-				entityId, displayName, ownerEID, publicKey, scopes, String.valueOf(registerationCompleted));
+		return String.format("Device[entityId=%s, displayName='%s', ownerEID=%s, publicKey=%s, registerationCompleted=%s]",
+				entityId, displayName, ownerEID, publicKey, String.valueOf(registerationCompleted));
 	}
 }

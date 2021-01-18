@@ -4,26 +4,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class IrmNotFoundException extends IrmException
+public class IrmOrgNotFoundException extends IrmException
 {
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 4L;
 
-	public IrmNotFoundException()
+	public IrmOrgNotFoundException()
 	{
         super();
     }
 
-    public IrmNotFoundException(String message)
+    public IrmOrgNotFoundException(String message)
     {
         super(message);
     }
 
-    public IrmNotFoundException(Throwable cause)
+    public IrmOrgNotFoundException(Throwable cause)
     {
         super(cause);
     }
     
-    public IrmNotFoundException(String message, Throwable cause)
+    public IrmOrgNotFoundException(String message, Throwable cause)
     {
         super(message, cause);
     }

@@ -18,7 +18,6 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 import org.slf4j.Logger;
 
@@ -93,7 +92,7 @@ public class PkiUtil
 	{
 		PemFile pemFile = new PemFile(key, description);
 		pemFile.write(filename);
-		LOGGER.info(String.format("%s successfully writen in file %s.", description, filename));
+		LOGGER.debug(String.format("%s successfully writen in file %s.", description, filename));
 	}
 	
 	public static String getStringFormat(Key key)
@@ -101,7 +100,7 @@ public class PkiUtil
 	{
 		byte[] byte_pubkey = key.getEncoded();
 		String strKey = Base64.getEncoder().encodeToString(byte_pubkey);		
-		LOGGER.info("String KEY::" + strKey);
+		LOGGER.debug("Key:" + strKey);
 		
 		return strKey;
 	}
@@ -115,9 +114,9 @@ public class PkiUtil
 		try {
 			KeyFactory factory = KeyFactory.getInstance(Constants.PKI_ALGORITHM);
 			pubKey = factory.generatePublic(new X509EncodedKeySpec(bKey));
-			System.out.println("FINAL OUTPUT" + pubKey);
+			LOGGER.debug("Key: " + pubKey);
 		} catch(NoSuchAlgorithmException | InvalidKeySpecException e) {
-			LOGGER.error("Error when rebuilding public key", e);
+			LOGGER.debug("Error when rebuilding public key", e);
 			throw new IrmCryptographyException(e);
 		}
 		
@@ -133,9 +132,9 @@ public class PkiUtil
 		try {
 			KeyFactory factory = KeyFactory.getInstance(Constants.PKI_ALGORITHM);
 			priKey = factory.generatePrivate(new PKCS8EncodedKeySpec(bKey));
-			System.out.println("FINAL OUTPUT" + priKey);
+			LOGGER.debug("Key: " + priKey);
 		} catch(NoSuchAlgorithmException | InvalidKeySpecException e) {
-			LOGGER.error("Error when rebuilding public key", e);
+			LOGGER.debug("Error when rebuilding public key", e);
 			throw new IrmCryptographyException(e);
 		}
 		

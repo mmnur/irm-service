@@ -2,7 +2,6 @@ package com.example.irm.model;
 
 import java.io.Serializable;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Organizatons")
+@Table(name = "Organizations")
 public class Organization implements Serializable
 { 
 	private static final long serialVersionUID = -2343243243242432341L;
