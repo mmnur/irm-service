@@ -79,42 +79,9 @@ public class Entity
     	return null;
     }
     
-    /*
-    
-    public List<Relationship> findRelationship(String eid, List<List<Relationship>> relations, int maxDegreeOfRelationship, int currentDegreeOfRelationship, UUID visitedFlag)
-    {
-    	this.markVisited(visitedFlag);
-    	
-    	if (currentDegreeOfRelationship <= maxDegreeOfRelationship) {
-	    	
-	    	for (Map.Entry<Entity, RelationType> entry : this.adjacentEntities.entrySet()) {
-	    		Entity e = entry.getKey();
-	    		if (!e.isVisited(visitedFlag)) {
-		    		if (e.entityID.compareToIgnoreCase(eid) == 0) {
-		    			Relationship r = new Relationship(this.entityID, e.getEntityID(), entry.getValue(), e.getRelationship(this));
-		    			relations.add(r);
-		    			return relations;
-		    		}
-		    		List<Relationship> relationships = e.findRelationship(eid, relations, maxDegreeOfRelationship, currentDegreeOfRelationship + 1, visitedFlag);
-		    		if (relationships != null) {
-		    			Relationship r = new Relationship(this.entityID, e.getEntityID(), entry.getValue(), e.getRelationship(this));
-		    			relationships.add(r);
-		    			return relationships;
-		    			
-		    		}
-	    		}
-	    	}
-    	}
-    	
-    	return null;
-    }
-	*/
-    
-    
     public void findRelationship(String eid2, List<List<Entity>> allPaths, List<Entity> currentPath, int maxDegreeOfRelationship, int currentDegreeOfRelationship, UUID visitedFlag)
     {
     	if (currentDegreeOfRelationship <= maxDegreeOfRelationship) {
-			this.markVisited(visitedFlag);
 			
     		if(this.getEntityID().equalsIgnoreCase(eid2)) {
     			allPaths.add(currentPath);
@@ -123,7 +90,7 @@ public class Entity
     		
 	    	for (Map.Entry<Entity, RelationType> entry : this.adjacentEntities.entrySet()) {
 	    		Entity adjacentEntity = entry.getKey();
-	    		if (!adjacentEntity.isVisited(visitedFlag)) {
+	    		if (!currentPath.contains(adjacentEntity)) {
 	    			List<Entity> currentPathExtension = copyList(currentPath);
 	    			currentPathExtension.add(adjacentEntity);
 	    			adjacentEntity.findRelationship(eid2, allPaths, currentPathExtension, maxDegreeOfRelationship, currentDegreeOfRelationship+1, visitedFlag);
