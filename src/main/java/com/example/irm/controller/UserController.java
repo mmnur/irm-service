@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.irm.error.AlreadyExistsException;
-import com.example.irm.error.IrmUserNotFoundException;
+import com.example.irm.error.IrmNotFoundException;
 import com.example.irm.graph.Entity;
 import com.example.irm.graph.RelationshipGraph;
 import com.example.irm.model.User;
@@ -18,7 +18,6 @@ import com.example.irm.view.UserUI;
 import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,11 +85,11 @@ public class UserController
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, String> authenticate(@RequestBody UserUI userUI)
-			throws IrmUserNotFoundException
+			throws IrmNotFoundException
 	{
 		List<User> users = repository.findByUsername(userUI.getUsername());		
 		if (users.isEmpty()) {
-			throw new IrmUserNotFoundException("Username or password not found!");
+			throw new IrmNotFoundException("Username or password not found!");
 		}
 		
 		User user = users.get(0);
@@ -100,7 +99,7 @@ public class UserController
 			retValue.put("entityId", user.getEntityId());			
 			return retValue;			
 		}
-		throw new IrmUserNotFoundException("Username or password not found!");
+		throw new IrmNotFoundException("Username or password not found!");
 	}
 	
 	@GetMapping(path = "/findall")
@@ -111,33 +110,6 @@ public class UserController
 		
 		for (User user : users) {
 			userUI.add(new UserUI(user.getEntityId(), user.getDisplayName(), user.getEmail(), user.getUsername()));
-		}
-
-		return userUI;
-	}
-	
-	@RequestMapping(path = "/eid/{entityId}")
-	public String searchByEntityId(@PathVariable String entityId){
-		String user = "";
-		user = repository.findByEntityId(entityId).toString();
-		return user;
-	}
-	
-	@RequestMapping(path = "/email/{email}")
-	public String searchByEmail(@PathVariable String email){
-		String user = "";
-		user = repository.findByEmail(email).toString();
-		return user;
-	}
-
-	@RequestMapping(path = "/username/{username}")
-	public List<UserUI> fetchDataByUsername(@PathVariable String username){
-	
-		List<User> users = repository.findByUsername(username);
-		List<UserUI> userUI = new ArrayList<>();
-		
-		for (User user : users) {
-			userUI.add(new UserUI(user.getDisplayName(), user.getEmail(), user.getUsername(), user.getPassword()));
 		}
 
 		return userUI;

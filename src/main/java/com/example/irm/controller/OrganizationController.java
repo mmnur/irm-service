@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.irm.error.AlreadyExistsException;
-import com.example.irm.error.IrmOrgNotFoundException;
+import com.example.irm.error.IrmNotFoundException;
 import com.example.irm.graph.Entity;
 import com.example.irm.graph.RelationshipGraph;
 import com.example.irm.model.Organization;
@@ -18,7 +18,6 @@ import com.example.irm.view.OrganizationUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -95,11 +94,11 @@ public class OrganizationController
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, String> authenticate(@RequestBody OrganizationUI orgUI)
-			throws IrmOrgNotFoundException
+			throws IrmNotFoundException
 	{
 		List<Organization> orgs = repository.findByUsername(orgUI.getUsername());		
 		if (orgs.isEmpty()) {
-			throw new IrmOrgNotFoundException("Username or password not found!");
+			throw new IrmNotFoundException("Username or password not found!");
 		}
 		
 		Organization org = orgs.get(0);
@@ -109,33 +108,6 @@ public class OrganizationController
 			retValue.put("entityId", org.getEntityId());			
 			return retValue;			
 		}
-		throw new IrmOrgNotFoundException("Username or password not found!");
-	}
-	
-	@RequestMapping(path = "/eid/{entityId}")
-	public String searchByEntityId(@PathVariable String entityId){
-		String org = "";
-		org = repository.findByEntityId(entityId).toString();
-		return org;
-	}
-	
-	@RequestMapping(path = "/email/{email}")
-	public String searchByEmail(@PathVariable String email){
-		String org = "";
-		org = repository.findByEmail(email).toString();
-		return org;
-	}
-
-	@RequestMapping(path = "/orgname/{username}")
-	public List<OrganizationUI> fetchDataByUsername(@PathVariable String username){
-	
-		List<Organization> orgs = repository.findByUsername(username);
-		List<OrganizationUI> orgUI = new ArrayList<>();
-		
-		for (Organization org : orgs) {
-			orgUI.add(new OrganizationUI(org.getDisplayName(), org.getEmail(), org.getUsername(), org.getPassword()));
-		}
-
-		return orgUI;
+		throw new IrmNotFoundException("Username or password not found!");
 	}
 }
