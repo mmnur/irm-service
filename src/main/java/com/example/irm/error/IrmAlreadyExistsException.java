@@ -4,26 +4,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.CONFLICT)
-public class AlreadyExistsException extends IrmException
+public class IrmAlreadyExistsException extends IrmException
 {
 	private static final long serialVersionUID = 2L;
 
-	public AlreadyExistsException()
+	public IrmAlreadyExistsException()
 	{
         super();
     }
 
-    public AlreadyExistsException(String message)
+    public IrmAlreadyExistsException(String message)
     {
         super(message);
     }
 
-    public AlreadyExistsException(Throwable cause)
+    public IrmAlreadyExistsException(Throwable cause)
     {
         super(cause);
     }
     
-    public AlreadyExistsException(String message, Throwable cause)
+    public IrmAlreadyExistsException(String message, Throwable cause)
     {
         super(message, cause);
     }
