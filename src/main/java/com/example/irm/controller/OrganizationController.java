@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.irm.error.AlreadyExistsException;
+import com.example.irm.error.IrmAlreadyExistsException;
 import com.example.irm.error.IrmNotFoundException;
 import com.example.irm.graph.Entity;
 import com.example.irm.graph.RelationshipGraph;
@@ -52,16 +52,16 @@ public class OrganizationController
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, String> create(@RequestBody OrganizationUI orgUI)
-			throws AlreadyExistsException
+			throws IrmAlreadyExistsException
 	{
 		List<Organization> orgs = repository.findByUsername(orgUI.getUsername());		
 		if (!orgs.isEmpty()) {
-			throw new AlreadyExistsException("An organization already exists with the same username");
+			throw new IrmAlreadyExistsException("An organization already exists with the same username");
 		}
 		
 		orgs = repository.findByEmail(orgUI.getEmail());
 		if (!orgs.isEmpty()) {
-			throw new AlreadyExistsException("An organization already exists with the same email");
+			throw new IrmAlreadyExistsException("An organization already exists with the same email");
 		}
 		
 		repository.save(new Organization(orgUI.getDisplayName(), orgUI.getEmail(), orgUI.getUsername(), orgUI.getPassword()));

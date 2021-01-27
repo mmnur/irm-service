@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.irm.error.AlreadyExistsException;
+import com.example.irm.error.IrmAlreadyExistsException;
 import com.example.irm.error.IrmNotFoundException;
 import com.example.irm.graph.Entity;
 import com.example.irm.graph.RelationshipGraph;
@@ -57,16 +57,16 @@ public class UserController
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public Map<String, String> create(@RequestBody UserUI userUI)
-			throws AlreadyExistsException
+			throws IrmAlreadyExistsException
 	{
 		List<User> users = repository.findByUsername(userUI.getUsername());		
 		if (!users.isEmpty()) {
-			throw new AlreadyExistsException("A user already exists with the same username");
+			throw new IrmAlreadyExistsException("A user already exists with the same username");
 		}
 		
 		users = repository.findByEmail(userUI.getEmail());
 		if (!users.isEmpty()) {
-			throw new AlreadyExistsException("A user already exists with the same email");
+			throw new IrmAlreadyExistsException("A user already exists with the same email");
 		}
 		
 		User user = repository.save(new User(userUI.getDisplayName(), userUI.getEmail(), userUI.getUsername(), userUI.getPassword()));
