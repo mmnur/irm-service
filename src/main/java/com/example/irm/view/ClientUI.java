@@ -1,16 +1,16 @@
 package com.example.irm.view;
 
-public class IamServiceUI 
+public class ClientUI 
 {	
     private String displayName;
 	private String clientId;
 	private String clientSecret;
     
-    protected IamServiceUI()
+    protected ClientUI()
     {
 	}
  
-	public IamServiceUI(String displayName, String clientId, String clientSecret)
+	public ClientUI(String displayName, String clientId, String clientSecret)
 	{
 		this.displayName = displayName;
 		this.clientId = clientId;

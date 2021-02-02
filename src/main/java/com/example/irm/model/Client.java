@@ -9,8 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "IamService")
-public class IamService implements Serializable
+@Table(name = "Clients")
+public class Client implements Serializable
 { 
 	private static final long serialVersionUID = -2343243275742432342L;
 
@@ -27,11 +27,11 @@ public class IamService implements Serializable
 	@Column(name = "ClientSecret")
 	private String clientSecret;
 
-	protected IamService()
+	protected Client()
 	{
 	}
 	
-	public IamService(String displayName, String clientId, String clientSecret)
+	public Client(String displayName, String clientId, String clientSecret)
 	{
 		this.displayName = displayName;
 		this.clientId = clientId;

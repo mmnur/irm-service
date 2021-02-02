@@ -11,5 +11,6 @@ public interface OrganizationRepository extends CrudRepository<Organization, Lon
 	List<Organization> findByUsername(String username);
 	List<Organization> findByEmail(String email);
 	List<Organization> findByEntityId(String entityID);
+	List<Organization> findByType(String type);
 	List<Organization> findAll();
 }

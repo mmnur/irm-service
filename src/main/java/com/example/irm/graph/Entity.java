@@ -7,14 +7,13 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.example.irm.utils.EntityType;
-import com.example.irm.utils.RelationType;
 
 public class Entity
 {
     private String entityID;
     private EntityType entityType;
     private List<UUID> visited = new ArrayList<UUID>();
-    private Map<Entity, RelationType> adjacentEntities = new HashMap<>();
+    private Map<Entity, String> adjacentEntities = new HashMap<>();
 
     public Entity(String eid, EntityType type)
     {
@@ -22,7 +21,7 @@ public class Entity
         this.setEntityType(type);
     }
 
-    public void addRelation(Entity relatedEntity, RelationType relationType)
+    public void addRelation(Entity relatedEntity, String relationType)
     {
         adjacentEntities.put(relatedEntity, relationType);
     }
@@ -55,7 +54,7 @@ public class Entity
 			return this;
 		}
     	
-    	for (Map.Entry<Entity, RelationType> entry : this.adjacentEntities.entrySet()) {
+    	for (Map.Entry<Entity, String> entry : this.adjacentEntities.entrySet()) {
     		Entity e1 = entry.getKey();
     		if (!e1.isVisited(visitedFlag)) {
     			Entity e = e1.findEntity(eid, visitedFlag);
@@ -68,9 +67,9 @@ public class Entity
     	return null;
     }
     
-    RelationType getRelationship(Entity e)
+    String getRelationship(Entity e)
     {
-    	for (Map.Entry<Entity, RelationType> entry : this.adjacentEntities.entrySet()) {
+    	for (Map.Entry<Entity, String> entry : this.adjacentEntities.entrySet()) {
     		if (entry.getKey() == e) {
     			return entry.getValue();
     		}
@@ -88,7 +87,7 @@ public class Entity
     			return;
     		}
     		
-	    	for (Map.Entry<Entity, RelationType> entry : this.adjacentEntities.entrySet()) {
+	    	for (Map.Entry<Entity, String> entry : this.adjacentEntities.entrySet()) {
 	    		Entity adjacentEntity = entry.getKey();
 	    		if (!currentPath.contains(adjacentEntity)) {
 	    			List<Entity> currentPathExtension = copyList(currentPath);
@@ -110,12 +109,12 @@ public class Entity
     	return b;
     }
     
-    public Map<Entity, RelationType> getAdjacentEntities()
+    public Map<Entity, String> getAdjacentEntities()
     {
         return adjacentEntities;
     }
 
-    public void setAdjacentNodes(Map<Entity, RelationType> adjacentEntities)
+    public void setAdjacentNodes(Map<Entity, String> adjacentEntities)
     {
         this.adjacentEntities = adjacentEntities;        
     }

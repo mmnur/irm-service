@@ -14,7 +14,6 @@ import com.example.irm.repository.RelationshipRepository;
 import com.example.irm.repository.UserRepository;
 import com.example.irm.utils.EntityType;
 import com.example.irm.utils.PkiUtil;
-import com.example.irm.utils.RelationType;
 import com.example.irm.view.DeviceUI;
 
 import java.security.PublicKey;
@@ -98,11 +97,11 @@ public class DeviceController
 		String ownerEid = deviceToUpdate.getOwnerEID();		
 		Entity ownerEntity = RelationshipGraph.getGraph().findEntity(ownerEid);
 		if (ownerEntity != null) {
-			ownerEntity.addRelation(deviceEntity, RelationType.Owner);
-			deviceEntity.addRelation(ownerEntity, RelationType.OwnedBy);			
+			ownerEntity.addRelation(deviceEntity, "Owner");
+			deviceEntity.addRelation(ownerEntity, "OwnedBy");			
 		}
 		
-		Relationship relationship = new Relationship(ownerEid, ownerEid, RelationType.Owner, RelationType.OwnedBy);
+		Relationship relationship = new Relationship(ownerEid, ownerEid, "Owner", "OwnedBy");
 		relationshipRepository.save(relationship);
 
 		Map<String, String> retValue = new HashMap<String, String>();		

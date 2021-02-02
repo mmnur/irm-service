@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.example.irm.model.Relationship;
-import com.example.irm.utils.RelationType;
 
 public class RelationshipGraph
 {
@@ -49,7 +48,7 @@ public class RelationshipGraph
         	List<Relationship> relations = new ArrayList<Relationship>();
     		allRelationships.add(relations);
     		
-    		Relationship r = new Relationship(eid1, eid2, RelationType.Self, RelationType.Self);
+    		Relationship r = new Relationship(eid1, eid2, "Self", "Self");
     		relations.add(r);
     		
     		return allRelationships;

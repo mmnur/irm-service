@@ -7,18 +7,19 @@ public class OrganizationUI
     private String username;
     private String email;
     private String password;
+    private String type;
     
-    protected OrganizationUI()
+	protected OrganizationUI()
     {
 	}
  
-	public OrganizationUI(String entityId, String displayName, String email, String username/*, String password*/)
+	public OrganizationUI(String entityId, String displayName, String email, String username, String type)
 	{
 		this.entityId = entityId;
 		this.displayName = displayName;
 		this.email = email;
 		this.username = username;
-		//this.password = password;				
+		this.type = type;
 	}
 	
 	public String getEntityId()
@@ -71,8 +72,11 @@ public class OrganizationUI
         this.email = email;
     }       
 
-	public String toString()
-	{
-		return String.format("User[entityId=%s, displayName='%s', username=%s, email=%d]", entityId, displayName, username, email);
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

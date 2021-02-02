@@ -1,22 +1,20 @@
 package com.example.irm.graph;
 
-import com.example.irm.utils.RelationType;
-
 public class Relation
 {
-	private RelationType relationType;
+	private String relationType;
 	private int distance;
 	
-	public Relation(RelationType relationType, int distance) {
+	public Relation(String relationType, int distance) {
 		this.setRelationType(relationType);
 		this.setDistance(distance);
 	}
 
-	public RelationType getRelationType() {
+	public String getRelationType() {
 		return relationType;
 	}
 
-	public void setRelationType(RelationType relationType) {
+	public void setRelationType(String relationType) {
 		this.relationType = relationType;
 	}
 

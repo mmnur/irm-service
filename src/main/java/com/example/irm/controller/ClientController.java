@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.irm.error.IrmNotFoundException;
-import com.example.irm.model.IamService;
-import com.example.irm.repository.IamServiceRepository;
-import com.example.irm.view.IamServiceUI;
+import com.example.irm.model.Client;
+import com.example.irm.repository.ClientRepository;
+import com.example.irm.view.ClientUI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,19 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
  
 @RestController
 @RequestMapping("/clients")
-public class IamServiceController
+public class ClientController
 {
 	@Autowired
-	IamServiceRepository iamServiceRepository;
+	ClientRepository clientRepository;
 	
 	@PostMapping(
 			path = "/register",
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, String> create(@RequestBody IamServiceUI iamServiceUI)
+	public Map<String, String> create(@RequestBody ClientUI clientUI)
 	{
-		IamService iamService = new IamService(iamServiceUI.getDisplayName(), iamServiceUI.getClientId(), iamServiceUI.getClientSecret());
-		IamService is = iamServiceRepository.save(iamService);
+		Client client = new Client(clientUI.getDisplayName(), clientUI.getClientId(), clientUI.getClientSecret());
+		Client is = clientRepository.save(client);
 		
 		Map<String, String> retValue = new HashMap<String, String>();		
 		retValue.put("RefNo", is.getId());
@@ -43,17 +43,17 @@ public class IamServiceController
 			path = "/authenticate", 
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, String> authenticate(@RequestBody IamServiceUI iamServiceUI)
+	public Map<String, String> authenticate(@RequestBody ClientUI clientUI)
 			throws IrmNotFoundException
 	{
-		List<IamService> iamServices = iamServiceRepository.findByClientId(iamServiceUI.getClientId());		
+		List<Client> iamServices = clientRepository.findByClientId(clientUI.getClientId());		
 		if (iamServices.isEmpty()) {
 			throw new IrmNotFoundException("Client ID or secret not found!");
 		}
 		
-		IamService iamSvc = iamServices.get(0);
+		Client iamSvc = iamServices.get(0);
 		String clientSecret = iamSvc.getClientSecret();
-		if (iamServiceUI.getClientSecret().equals(clientSecret)) {
+		if (clientUI.getClientSecret().equals(clientSecret)) {
 			Map<String, String> retValue = new HashMap<String, String>();		
 			retValue.put("RefId", iamSvc.getId());			
 			return retValue;

@@ -30,12 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController
 {
 	@Autowired
-	UserRepository repository;
+	UserRepository userRepository;
 	
 	@GetMapping(path = "/bulkregister")
 	public Iterable<User> bulkcreate()
 	{
-		 Iterable<User> users = repository.saveAll(Arrays.asList(
+		 Iterable<User> users = userRepository.saveAll(Arrays.asList(
         		  new User("Jim Carter", "jim1@example.com", "jim1", "jim123")
         		, new User("John Doe", "john1@example.com", "john1", "john123")
         		, new User("Jack Smith", "jack1@example.com", "jack1", "jack123")
@@ -59,17 +59,17 @@ public class UserController
 	public Map<String, String> create(@RequestBody UserUI userUI)
 			throws IrmAlreadyExistsException
 	{
-		List<User> users = repository.findByUsername(userUI.getUsername());		
+		List<User> users = userRepository.findByUsername(userUI.getUsername());		
 		if (!users.isEmpty()) {
 			throw new IrmAlreadyExistsException("A user already exists with the same username");
 		}
 		
-		users = repository.findByEmail(userUI.getEmail());
+		users = userRepository.findByEmail(userUI.getEmail());
 		if (!users.isEmpty()) {
 			throw new IrmAlreadyExistsException("A user already exists with the same email");
 		}
 		
-		User user = repository.save(new User(userUI.getDisplayName(), userUI.getEmail(), userUI.getUsername(), userUI.getPassword()));
+		User user = userRepository.save(new User(userUI.getDisplayName(), userUI.getEmail(), userUI.getUsername(), userUI.getPassword()));
 		String eid = user.getEntityId();
 		Entity entity = new Entity(eid, EntityType.User); 
 		RelationshipGraph.getGraph().addEntity(entity);
@@ -87,7 +87,7 @@ public class UserController
 	public Map<String, String> authenticate(@RequestBody UserUI userUI)
 			throws IrmNotFoundException
 	{
-		List<User> users = repository.findByUsername(userUI.getUsername());		
+		List<User> users = userRepository.findByUsername(userUI.getUsername());		
 		if (users.isEmpty()) {
 			throw new IrmNotFoundException("Username or password not found!");
 		}
@@ -105,7 +105,7 @@ public class UserController
 	@GetMapping(path = "/findall")
 	public List<UserUI> findAll()
 	{
-		List<User> users = repository.findAll();
+		List<User> users = userRepository.findAll();
 		List<UserUI> userUI = new ArrayList<>();
 		
 		for (User user : users) {

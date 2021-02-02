@@ -32,16 +32,20 @@ public class Organization implements Serializable
 	@Column(name = "Email")
 	private String email;
 
+	@Column(name = "Type")
+	private String type;
+
 	protected Organization()
 	{
 	}
  
-	public Organization(String displayName, String email, String username, String password)
+	public Organization(String displayName, String email, String username, String password, String type)
 	{
 		this.displayName = displayName;
 		this.email = email;
 		this.username = username;
-		this.password = password;				
+		this.password = password;	
+		this.type = type;
 	}
  
 	public String getEntityId()
@@ -92,10 +96,13 @@ public class Organization implements Serializable
     public void setEmail(String email)
     {
         this.email = email;
-    }       
-	@Override
-	public String toString()
-	{
-		return String.format("Organization[entityId=%s, displayName='%s', username=%s, email=%d]", entityId, displayName, username, email);
+    }
+    
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

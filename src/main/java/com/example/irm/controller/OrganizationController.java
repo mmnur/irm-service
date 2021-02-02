@@ -35,8 +35,8 @@ public class OrganizationController
 	{
 		// save a list of Organizations
 		Iterable<Organization> orgs = repository.saveAll(Arrays.asList(
-				new Organization("Premier Hospital", "admin@premier.com", "adminpm", "adminpm123")
-        		, new Organization("Tech Zilla", "admin@techzilla.com", "admintz", "admintz123")));
+				new Organization("Premier Hospital", "admin@premier.com", "adminpm", "adminpm123", "hospital"),
+        		new Organization("Tech Zilla", "admin@techzilla.com", "admintz", "admintz123", "technology")));
 
 		for (Organization org: orgs) {
 			String eid = org.getEntityId();		
@@ -64,7 +64,7 @@ public class OrganizationController
 			throw new IrmAlreadyExistsException("An organization already exists with the same email");
 		}
 		
-		repository.save(new Organization(orgUI.getDisplayName(), orgUI.getEmail(), orgUI.getUsername(), orgUI.getPassword()));
+		repository.save(new Organization(orgUI.getDisplayName(), orgUI.getEmail(), orgUI.getUsername(), orgUI.getPassword(), orgUI.getType()));
 		
 		String eid = repository.findByEmail(orgUI.getEmail()).get(0).getEntityId();		
 		Entity entity = new Entity(eid, EntityType.Device); 
@@ -83,7 +83,7 @@ public class OrganizationController
 		List<OrganizationUI> orgUI = new ArrayList<>();
 		
 		for (Organization org : orgs) {
-			orgUI.add(new OrganizationUI(org.getEntityId(), org.getDisplayName(), org.getEmail(), org.getUsername()));
+			orgUI.add(new OrganizationUI(org.getEntityId(), org.getDisplayName(), org.getEmail(), org.getUsername(), org.getType()));
 		}
 
 		return orgUI;
