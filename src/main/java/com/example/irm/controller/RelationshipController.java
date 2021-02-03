@@ -10,6 +10,7 @@ import com.example.irm.graph.Entity;
 import com.example.irm.graph.RelationshipGraph;
 import com.example.irm.model.Organization;
 import com.example.irm.model.Relationship;
+import com.example.irm.model.User;
 import com.example.irm.repository.OrganizationRepository;
 import com.example.irm.repository.RelationshipRepository;
 import com.example.irm.repository.UserRepository;
@@ -42,17 +43,24 @@ public class RelationshipController
 			path = "/register",
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, String> create(@RequestBody RelationshipUI relationshipUI)
+	public Map<String, String> create(@RequestBody RelationshipUI relationshipUI) throws IrmNotFoundException
 	{
+		Entity entitySrc = RelationshipGraph.getGraph().findEntity(relationshipUI.getEntitySrc());		
+		if (entitySrc == null) {
+			throw new IrmNotFoundException("Not found: " + relationshipUI.getEntitySrc());
+		}
+		
+		Entity entityTgt = RelationshipGraph.getGraph().findEntity(relationshipUI.getEntityTgt());
+		if (entityTgt == null) {
+			throw new IrmNotFoundException("Not found: " + relationshipUI.getEntityTgt());
+		}
+
+		entitySrc.addRelation(entityTgt, relationshipUI.getRelationTypeS2T());
+		entityTgt.addRelation(entitySrc, relationshipUI.getRelationTypeT2S());
+
 		Relationship relationship = new Relationship(relationshipUI.getEntitySrc(), relationshipUI.getEntityTgt(), relationshipUI.getRelationTypeS2T(), relationshipUI.getRelationTypeT2S());
 		Relationship r = relationshipRepository.save(relationship);
 		
-		Entity entitySrc = RelationshipGraph.getGraph().findEntity(relationship.getEntitySrc());
-		Entity entityTgt = RelationshipGraph.getGraph().findEntity(relationship.getEntityTgt());
-
-		entitySrc.addRelation(entityTgt, relationship.getRelationTypeS2T());
-		entityTgt.addRelation(entitySrc, relationship.getRelationTypeT2S());
-
 		Map<String, String> retValue = new HashMap<String, String>();		
 		retValue.put("RefNo", r.getId());
 		
@@ -64,19 +72,42 @@ public class RelationshipController
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, String> createbyemail(@RequestBody RelationshipUI relationshipUI)
+			throws IrmNotFoundException
 	{
-		Relationship relationship = new Relationship(
-				userRepository.findByEmail(relationshipUI.getEntitySrc()).get(0).getEntityId(),
-				userRepository.findByEmail(relationshipUI.getEntityTgt()).get(0).getEntityId(),
-				relationshipUI.getRelationTypeS2T(),
-				relationshipUI.getRelationTypeT2S());
-		Relationship r = relationshipRepository.save(relationship);
+		List<User> users = userRepository.findByEmail(relationshipUI.getEntitySrc());
+		String entitySrcId = null;
+		if (users.size() > 0) {
+			entitySrcId = users.get(0).getEntityId();			
+		} else {
+			List<Organization> orgs = organizationRepository.findByEmail(relationshipUI.getEntitySrc());
+			if (orgs.size() > 0) {
+				entitySrcId = orgs.get(0).getEntityId();
+			} else {
+				throw new IrmNotFoundException("Not found: " + relationshipUI.getEntitySrc());
+			}
+		}
 		
+		users = userRepository.findByEmail(relationshipUI.getEntityTgt());
+		String entityTgtId = null;
+		if (users.size() > 0) {
+			entityTgtId = users.get(0).getEntityId();			
+		} else {
+			List<Organization> orgs = organizationRepository.findByEmail(relationshipUI.getEntityTgt());
+			if (orgs.size() > 0) {
+				entityTgtId = orgs.get(0).getEntityId();
+			} else {
+				throw new IrmNotFoundException("Not found: " + relationshipUI.getEntityTgt());
+			}
+		}
+		
+		Relationship relationship = new Relationship(
+				entitySrcId, entityTgtId, relationshipUI.getRelationTypeS2T(), relationshipUI.getRelationTypeT2S());
+		Relationship r = relationshipRepository.save(relationship);		
+
 		Entity entitySrc = RelationshipGraph.getGraph().findEntity(relationship.getEntitySrc());
 		Entity entityTgt = RelationshipGraph.getGraph().findEntity(relationship.getEntityTgt());
-
-		entitySrc.addRelation(entityTgt, relationship.getRelationTypeS2T());
-		entityTgt.addRelation(entitySrc, relationship.getRelationTypeT2S());
+		entitySrc.addRelation(entityTgt, relationshipUI.getRelationTypeS2T());
+		entityTgt.addRelation(entitySrc, relationshipUI.getRelationTypeT2S());
 
 		Map<String, String> retValue = new HashMap<String, String>();		
 		retValue.put("RefNo", r.getId());
@@ -94,6 +125,16 @@ public class RelationshipController
 			@RequestParam int maxDegreeOfRelationship)
 					throws IrmNotFoundException
 	{
+		Entity entitySrc = RelationshipGraph.getGraph().findEntity(entityIdSrc);
+		if (entitySrc == null) {
+			throw new IrmNotFoundException("Not found: " + entityIdSrc);
+		}
+
+		Entity entityTgt = RelationshipGraph.getGraph().findEntity(entityIdTgt);
+		if (entityTgt == null) {
+			throw new IrmNotFoundException("Not found: " + entityIdTgt);
+		}
+		
 		List<List<Relationship>> allRelationships = RelationshipGraph.getGraph().findRelationships(entityIdSrc, entityIdTgt, maxDegreeOfRelationship);
 		
 		if (allRelationships.size() > 0) {
@@ -117,15 +158,39 @@ public class RelationshipController
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<List<RelationshipUI>> findRelationshipByEmail(
-			@RequestParam String entityIdSrc,
-			@RequestParam String entityIdTgt,
+			@RequestParam String entitySrcEmail,
+			@RequestParam String entityTgtEmail,
 			@RequestParam int maxDegreeOfRelationship)
 					throws IrmNotFoundException
 	{
+		List<User> users = userRepository.findByEmail(entitySrcEmail);
+		String entitySrcId = null;
+		if (users.size() > 0) {
+			entitySrcId = users.get(0).getEntityId();			
+		} else {
+			List<Organization> orgs = organizationRepository.findByEmail(entitySrcEmail);
+			if (orgs.size() > 0) {
+				entitySrcId = orgs.get(0).getEntityId();
+			} else {
+				throw new IrmNotFoundException("Not found: " + entitySrcEmail);
+			}
+		}
+		
+		users = userRepository.findByEmail(entityTgtEmail);
+		String entityTgtId = null;
+		if (users.size() > 0) {
+			entityTgtId = users.get(0).getEntityId();			
+		} else {
+			List<Organization> orgs = organizationRepository.findByEmail(entityTgtEmail);
+			if (orgs.size() > 0) {
+				entityTgtId = orgs.get(0).getEntityId();
+			} else {
+				throw new IrmNotFoundException("Not found: " + entityTgtEmail);
+			}
+		}
+		
 		List<List<Relationship>> allRelationships = RelationshipGraph.getGraph().findRelationships(
-				userRepository.findByEmail(entityIdSrc).get(0).getEntityId(),
-				userRepository.findByEmail(entityIdTgt).get(0).getEntityId(),
-				maxDegreeOfRelationship);
+				entitySrcId, entityTgtId, maxDegreeOfRelationship);
 				
 		if (allRelationships.size() > 0) {
 			List<List<RelationshipUI>> allRelationshipUIs = new ArrayList<List<RelationshipUI>>();			
@@ -153,6 +218,11 @@ public class RelationshipController
 			@RequestParam int maxDegreeOfRelationship)
 					throws IrmNotFoundException
 	{
+		Entity entitySrc = RelationshipGraph.getGraph().findEntity(actorEntityIdSrc);
+		if (entitySrc == null) {
+			throw new IrmNotFoundException("Not found: " + actorEntityIdSrc);
+		}
+
 		List<Organization> orgs = organizationRepository.findByType(orgType);
 		for(Organization org: orgs) {
 			List<List<Relationship>> allRelationships = RelationshipGraph.getGraph().findRelationships(actorEntityIdSrc, org.getEntityId(), maxDegreeOfRelationship);
