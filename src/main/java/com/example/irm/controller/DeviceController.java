@@ -101,7 +101,7 @@ public class DeviceController
 			deviceEntity.addRelation(ownerEntity, "OwnedBy");			
 		}
 		
-		Relationship relationship = new Relationship(ownerEid, ownerEid, "Owner", "OwnedBy");
+		Relationship relationship = new Relationship(ownerEid, deviceEid, "Owner", "OwnedBy");
 		relationshipRepository.save(relationship);
 
 		Map<String, String> retValue = new HashMap<String, String>();		

@@ -38,8 +38,13 @@ public class UserController
 		 Iterable<User> users = userRepository.saveAll(Arrays.asList(
         		  new User("Jim Carter", "jim1@example.com", "jim1", "jim123")
         		, new User("John Doe", "john1@example.com", "john1", "john123")
+        		, new User("Bobby Jones", "bobby1@example.com", "bobby1", "bobby123")
+        		, new User("Alexa Thompson", "alexa1@example.com", "alexa1", "alexa123")
+        		, new User("Tom Watson", "tom1@example.com", "tom1", "tom123")
+        		, new User("Sofia Watson", "sofia1@example.com", "sofia1", "sofia123")
+        		, new User("Sara Reed", "sara1@example.com", "sara1", "sara123")
         		, new User("Jack Smith", "jack1@example.com", "jack1", "jack123")
-        		, new User("Pam Smith", "pam1@example.com", "pam1", "pam123")
+        		, new User("Pamela Smith", "pam1@example.com", "pam1", "pam123")
         		, new User("Oliver Smith", "oliver1@example.com", "oliver1", "oliver123")));
 		
 		for (User user: users) {
